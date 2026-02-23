@@ -45,10 +45,10 @@
 
     <!-- Main Visual -->
     <section class="relative h-[600px] flex items-center justify-center overflow-hidden">
-        <div id="hero-image" class="absolute inset-0 z-0">
-            <div class="w-full h-full bg-gray-400 animate-pulse flex items-center justify-center">
-                <span class="text-white">画像を生成中...</span>
-            </div>
+        <div id="hero-image" class="absolute inset-0 z-0 bg-gray-400">
+            <!-- 【重要】GitHubにアップした画像パスに書き換えてください -->
+            <!-- 例: imagesフォルダに hero.jpg を入れた場合、src="images/hero.jpg" とします -->
+            <img src="images/hero.png" onerror="this.src='https://images.unsplash.com/photo-1508814437933-f092c1107567?auto=format&fit=crop&q=80&w=2000'" class="w-full h-full object-cover" alt="メインビジュアル">
         </div>
         <div class="absolute inset-0 hero-overlay z-10"></div>
         <div class="relative z-20 text-center px-4">
@@ -263,7 +263,6 @@
 
         window.onload = () => {
             fetchSignatureCount();
-            generateImages();
         };
     </script>
 </body>
