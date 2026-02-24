@@ -13,12 +13,6 @@
             background-color: #f3f4f6;
             color: #1f2937;
         }
-        .gray-scale-bg {
-            background-color: #e5e7eb;
-        }
-        .accent-gray {
-            background-color: #374151;
-        }
         .hero-overlay {
             background: rgba(0, 0, 0, 0.4);
         }
@@ -46,9 +40,8 @@
     <!-- Main Visual -->
     <section class="relative h-[600px] flex items-center justify-center overflow-hidden">
         <div id="hero-image" class="absolute inset-0 z-0 bg-gray-400">
-            <!-- 【重要】GitHubにアップした画像パスに書き換えてください -->
-            <!-- 例: imagesフォルダに hero.jpg を入れた場合、src="images/hero.jpg" とします -->
-            <img src="images/hero.png" onerror="this.src='https://images.unsplash.com/photo-1508814437933-f092c1107567?auto=format&fit=crop&q=80&w=2000'" class="w-full h-full object-cover" alt="メインビジュアル">
+            <!-- デフォルトの背景画像（GitHub公開時などに表示される） -->
+            <img src="https://images.unsplash.com/photo-1508814437933-f092c1107567?auto=format&fit=crop&q=80&w=2000" class="w-full h-full object-cover" alt="日本の風景">
         </div>
         <div class="absolute inset-0 hero-overlay z-10"></div>
         <div class="relative z-20 text-center px-4">
@@ -149,7 +142,8 @@
                 </div>
                 <div class="w-full md:w-1/2">
                     <div id="about-image" class="rounded-2xl overflow-hidden shadow-xl aspect-video bg-gray-200 flex items-center justify-center">
-                        <span class="text-gray-400">画像を生成中...</span>
+                        <!-- デフォルトの背景画像 -->
+                        <img src="https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?auto=format&fit=crop&q=80&w=1000" class="w-full h-full object-cover" alt="里山の風景">
                     </div>
                 </div>
             </div>
@@ -192,21 +186,26 @@
             } catch (error) {
                 console.error('Fetch error:', error);
                 countElement.innerText = "---";
-                statusElement.innerText = "データの取得に失敗しました。GASの設定を確認してください。";
+                statusElement.innerText = "データの取得に失敗しました。";
             }
         }
 
         async function generateImages() {
-            const apiKey = ""; 
+            const apiKey = ""; // 本番環境ではAPIキーが必要なため、基本的には失敗します
+            if (!apiKey) {
+                console.log("API Key is missing. Using placeholder images.");
+                return; // キーがない場合はデフォルト画像を使用
+            }
+
             const prompts = [
                 {
                     id: 'hero-image',
-                    prompt: 'A panoramic landscape of Kimidani, Misato Town, Shimane, Japan. Beautiful rural mountain village with lush green forest, terraced rice fields, and a clear stream under a bright blue sky. cinematic lighting, photorealistic.',
+                    prompt: 'A panoramic landscape of Kimidani, Misato Town, Shimane, Japan. Beautiful rural mountain village, cinematic lighting.',
                     isHero: true
                 },
                 {
                     id: 'about-image',
-                    prompt: 'A close up of a traditional Japanese rural house (kominka) in Kimidani region, surrounding by nature and gardens, warm sunlight, peaceful atmosphere.'
+                    prompt: 'A traditional Japanese rural scenery with mountains and clear sky.'
                 }
             ];
 
@@ -224,14 +223,10 @@
                     if (result.predictions && result.predictions[0]) {
                         const imgUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
                         const container = document.getElementById(item.id);
-                        if (item.isHero) {
-                            container.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover" alt="君谷の風景">`;
-                        } else {
-                            container.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover" alt="君谷の地域紹介">`;
-                        }
+                        container.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover" alt="君谷の風景">`;
                     }
                 } catch (error) {
-                    console.error('Image generation failed:', error);
+                    console.error('AI Image generation failed:', error);
                 }
             }
         }
@@ -254,7 +249,7 @@
                     break;
                 case 'email':
                     const subject = encodeURIComponent(text);
-                    const body = encodeURIComponent(`以下のサイトからデジタル署名へのご協力をお願いします。\n\n${url}\n\n#君谷 #美郷町 #反対運動`);
+                    const body = encodeURIComponent(`以下のサイトからデジタル署名へのご協力をお願いします。\n\n${url}`);
                     window.location.href = `mailto:?subject=${subject}&body=${body}`;
                     return;
             }
@@ -263,6 +258,7 @@
 
         window.onload = () => {
             fetchSignatureCount();
+            generateImages();
         };
     </script>
 </body>
